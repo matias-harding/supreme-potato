@@ -15,7 +15,7 @@ const Todo = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
 
   const getTodos = async () => {
-    const response = await fetch('http://localhost:8000/api/todos', {
+    const response = await fetch('http://localhost:8000/api/todo/list', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
