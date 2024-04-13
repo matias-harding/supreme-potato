@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect } from "react";
 
 interface Todo {
   id: number;
@@ -6,23 +6,13 @@ interface Todo {
   complete: boolean;
 }
 
-const ListTodos = () => {
-
-  const [todos, setTodos] = useState<Todo[]>([]);
-
-  const getTodos = async () => {
-    const response = await fetch('http://localhost:8000/api/todos', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
-    const data = await response.json();
-    console.log(data);
-    setTodos(data);
-  }
+/**
+ * Renders a list of todos with options to update and delete each todo.
+ *
+ * @param {Object} props - Object containing todos array and getTodos function.
+ * @return {JSX.Element} The JSX element representing the list of todos.
+ */
+const ListTodos = (props: { todos: Todo[], getTodos: () => void }) => {
 
   const onComplete = async (todoId: number) => {
     await fetch(`http://localhost:8000/api/update/${todoId}`, {
@@ -33,7 +23,7 @@ const ListTodos = () => {
         'Access-Control-Allow-Origin': '*',
       },
     })
-    .then(() => getTodos());
+    .then(() => props.getTodos());
   };
 
   const onDelete = async (todoId: number) => {
@@ -46,19 +36,19 @@ const ListTodos = () => {
       },
     })
     .then(() => {
-      getTodos()
+      props.getTodos()
     });
   }
 
-  React.useEffect(() => {
-    getTodos();
+  useEffect(() => {
+    props.getTodos();
   }, [])
 
   return (
     <div className='flex flex-row justify-center'>
       <table style={{width: '60%'}} className="table-fixed mx-auto">
         <tbody>
-        {(todos.length > 0) ? todos.map((todo: Todo) => (
+        {(props.todos.length > 0) ? props.todos.map((todo: Todo) => (
             <tr key={todo.id} className='hover:bg-gray-100'>
               <td className='w-5/12 text-left pl-2'><b>{todo.title}</b></td>
               <td className='w-3/12 text-right'>
